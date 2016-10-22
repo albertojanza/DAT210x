@@ -4,9 +4,9 @@ import pandas as pd
 # Ensuring you set the appropriate header column names
 #
 # .. your code here ..
-df = pd.read_csv('/home/alberto/workspace/DAT210x/Module2/Datasets/servoo.data', names=['motor', 'screw', 'pgain', 'vgain', 'class'])
+df = pd.read_csv('/home/alberto/workspace/DAT210x/Module2/Datasets/servo.data', names=['motor', 'screw', 'pgain', 'vgain', 'class'])
 
-df = pd.read_csv('DAT210x/Module2/Datasets/servoo.data', names=['motor', 'screw', 'pgain', 'vgain', 'class'])
+
 
 # TODO: Create a slice that contains all entries
 # having a vgain equal to 5. Then print the 
