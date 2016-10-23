@@ -65,4 +65,18 @@ df = pd.get_dummies(df,columns=['sex'])
 #
 # .. your code here ..
 
+df.head()
+#   education  age  capital-gain   race  capital-loss  hours-per-week  \
+#0         10   39        2174.0  White             0              40   
+#1         10   50           NaN  White             0              13   
+#2          8   38           NaN  White             0              40   
+#3          6   53           NaN  Black             0              40   
+#4         10   28           0.0  Black             0              40   
+#
+#   classification  sex_0  sex_1  
+#0               0    0.0    1.0  
+#1               0    0.0    1.0  
+#2               0    0.0    1.0  
+#3               0    0.0    1.0  
+#4               0    1.0    0.0  
 
