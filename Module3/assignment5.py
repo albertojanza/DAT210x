@@ -44,6 +44,8 @@ plt.show()
 #Remember how you dropped the id, area, and perimeter features 
 #from your dataset? Well, add back in just the area and perimeter 
 #features, re-run your assignment again, then answer the second question below
-
-
+df_without_id = df.drop(df.columns[[0]], axis=1) 
+plt.figure()
+andrews_curves(df_without_id, 'wheat_type', alpha=0.4)
+plt.show()
 
