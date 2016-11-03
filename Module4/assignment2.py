@@ -16,19 +16,21 @@ scaleFeatures = False
 # by now ;-)
 #
 # .. your code here ..
-
-
+original_df = pd.read_csv('Datasets/kidney_disease.csv')
+original_df.shape
+df = original_df.dropna()
+df.shape
 
 # Create some color coded labels; the actual label feature
 # will be removed prior to executing PCA, since it's unsupervised.
 # You're only labeling by color so you can see the effects of PCA
 labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 
-
 # TODO: Use an indexer to select only the following columns:
 #       ['bgr','wc','rc']
 #
 # .. your code here ..
+df = df[['bgr','wc','rc']]
 
 
 
@@ -44,8 +46,10 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # an appropriate command to coerce these features into the right type.
 #
 # .. your code here ..
-
-
+df.dtypes
+df.wc = df.wc.astype(int)
+df.rc = df.rc.astype(float)
+df.dtypes
 
 # TODO: PCA Operates based on variance. The variable with the greatest
 # variance will dominate. Go ahead and peek into your data using a
@@ -57,6 +61,13 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # you probably didn't complete the previous step properly.
 #
 # .. your code here ..
+print df.describe()
+print "Variance of wc is %s. " % df.wc.var()
+print "Std of wc is %s. " % df.wc.std()
+print "Variance of rc is %s. " % df.rc.var()
+print "Std of rc is %s. " % df.rc.std()
+print "Variance of bgr is %s. " % df.bgr.var()
+print "Std of bgr is %s. " % df.bgr.std()
 
 
 
@@ -65,6 +76,7 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # just yet though!
 #
 # .. your code adjustment here ..
+
 if scaleFeatures: df = helper.scaleFeatures(df)
 
 
@@ -74,7 +86,9 @@ if scaleFeatures: df = helper.scaleFeatures(df)
 # and that the results of your transformation are saved in 'T'.
 #
 # .. your code here ..
-
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2)
+T = pca.fit_transform(df)
 
 # Plot the transformed data as a scatter plot. Recall that transforming
 # the data will result in a NumPy NDArray. You can either use MatPlotLib
@@ -91,5 +105,31 @@ T = pd.DataFrame(T)
 T.columns = ['component1', 'component2']
 T.plot.scatter(x='component1', y='component2', marker='o', c=labels, alpha=0.75, ax=ax)
 plt.show()
+
+
+
+
+#Last part of the assignment
+# Do * NOT * alter this line, until instructed!
+scaleFeatures = True
+if scaleFeatures: new_df = helper.scaleFeatures(df)
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2)
+T = pca.fit_transform(new_df)
+ax = helper.drawVectors(T, pca.components_, new_df.columns.values, plt, scaleFeatures)
+T = pd.DataFrame(T)
+T.columns = ['component1', 'component2']
+T.plot.scatter(x='component1', y='component2', marker='o', c=labels, alpha=0.75, ax=ax)
+plt.show()
+
+print new_df.describe()
+print "Variance of wc is %s. " % new_df.wc.var()
+print "Std of wc is %s. " % new_df.wc.std()
+print "Variance of rc is %s. " % new_df.rc.var()
+print "Std of rc is %s. " % new_df.rc.std()
+print "Variance of bgr is %s. " % new_df.bgr.var()
+print "Std of bgr is %s. " % new_df.bgr.std()
+
+
 
 

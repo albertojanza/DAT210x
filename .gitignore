@@ -7,8 +7,12 @@
 
 # Created by https://www.gitignore.io/api/rails,sass,vim
 
-### Rails ###
+#python
+*.pyc
 *ipynb_checkpoints
+
+
+### Rails ###
 *.rbc
 capybara-*.html
 .rspec
