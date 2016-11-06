@@ -52,6 +52,10 @@ for i in range(num_images):
 # y is the principal component you want displayed on the y-axis, Can be 1 or 2
 #
 # .. your code here ..
+from sklearn.decomposition import PCA
+pca = PCA(n_components=3)
+pca.fit(df)
+Plot2D(pca.transform(df),'PCA on faces dataset', 0, 1)
 
 
 #
@@ -60,7 +64,25 @@ for i in range(num_images):
 # the first two components.
 #
 # .. your code here ..
+from sklearn import manifold
+iso = manifold.Isomap(n_neighbors=4, n_components=3)
+iso.fit(df)
+Plot2D(iso.transform(df),'ISOmap on faces dataset', 0, 1)
 
+
+#Alter your code to graph the second and third components (index=1 and 2) instead of the 0th and 1st, 
+#for both PCA and Isomap. Look *closely* at the Isomap plot. Can you tell what 'degree of freedom' 
+#the X axis represents?
+Plot2D(pca.transform(df),'PCA on faces dataset, PC1 and PC2', 1, 2)
+Plot2D(iso.transform(df),'ISOmap on faces dataset, 2nd and 3rd dimesions', 1, 2)
+
+#In his experiment, Dr. Tenenbaum set his K-parameter (n_neighbors is SciKit-Learn) to 8. Try 
+#reducing that figure down to 3 and re-running your code. Does the X-Axis still represent the 
+#same degree of freedom?
+from sklearn import manifold
+iso = manifold.Isomap(n_neighbors=3, n_components=3)
+iso.fit(df)
+Plot2D(iso.transform(df),'ISOmap on faces dataset with 3 n_neighbors ', 0, 1)
 
 #
 # TODO: If you're up for a challenge, draw your dataframes in 3D

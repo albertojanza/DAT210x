@@ -7,8 +7,7 @@ import assignment2_helper as helper
 matplotlib.style.use('ggplot')
 
 
-# Do * NOT * alter this line, until instructed!
-scaleFeatures = False
+scaleFeatures = True
 
 
 # TODO: Load up the dataset and remove any and all
@@ -18,38 +17,30 @@ scaleFeatures = False
 # .. your code here ..
 original_df = pd.read_csv('Datasets/kidney_disease.csv')
 original_df.shape
-df = original_df.dropna()
-df.shape
+df_without_na = original_df.dropna()
+df_without_na.shape
 
 # Create some color coded labels; the actual label feature
 # will be removed prior to executing PCA, since it's unsupervised.
 # You're only labeling by color so you can see the effects of PCA
-labels = ['red' if i=='ckd' else 'green' for i in df.classification]
+labels = ['red' if i=='ckd' else 'green' for i in df_without_na.classification]
 
-# TODO: Use an indexer to select only the following columns:
-#       ['bgr','wc','rc']
-#
-# .. your code here ..
-df = df[['bgr','wc','rc']]
+# TODO: Instead of using an indexer to select just the bgr, rc, and wc, 
+#alter your assignment code to drop all the nominal features listed above. 
+#Be sure you select the right axis for columns and not rows, otherwise Pandas will complain!
 
+# id,age,bp,sg,al,su,rbc,pc,pcc,ba,bgr,bu,sc,sod,pot,hemo,pcv,wc,rc,htn,dm,cad,appet,pe,ane,classification
+# ['id', 'classification', 'rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
+df = df_without_na.drop(['id', 'classification', 'rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane'], 1)
 
-
-# TODO: Print out and check your dataframe's dtypes. You'll probably
-# want to call 'exit()' after you print it out so you can stop the
-# program's execution.
-#
-# You can either take a look at the dataset webpage in the attribute info
-# section: https://archive.ics.uci.edu/ml/datasets/Chronic_Kidney_Disease
-# or you can actually peek through the dataframe by printing a few rows.
-# What kind of data type should these three columns be? If Pandas didn't
-# properly detect and convert them to that data type for you, then use
-# an appropriate command to coerce these features into the right type.
-#
-# .. your code here ..
-df.dtypes
+#Right after you print out your dataset's dtypes, add an exit() so you can inspect the results. 
+#Does everything look like it should / properly numeric? If not, make code changes to coerce the 
+#remaining column(s).
+print df.dtypes
 df.wc = df.wc.astype(int)
+df.pcv = df.pcv.astype(int)
 df.rc = df.rc.astype(float)
-df.dtypes
+print df.dtypes
 
 # TODO: PCA Operates based on variance. The variable with the greatest
 # variance will dominate. Go ahead and peek into your data using a
@@ -107,29 +98,29 @@ T.plot.scatter(x='component1', y='component2', marker='o', c=labels, alpha=0.75,
 plt.show()
 
 
+#Alter your code so that you only drop the id and classification columns. For the remaining 10 nominal 
+#features, properly encode them by as explained in the Feature Representation section by creating new, 
+#boolean columns using Pandas .get_dummies(). You should be able to carry that out with a single line of code. 
+#Run your assignment again and see if your results have changed at all.
+df = df_without_na.drop(['id', 'classification'],axis=1)
+
+print df.dtypes
+df.wc = df.wc.astype(int)
+df.pcv = df.pcv.astype(int)
+df.rc = df.rc.astype(float)
+for column in ['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']:
+  df[column] = df[column].astype("category").cat.codes
+print df.dtypes
+
+df = pd.get_dummies(df,columns=['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane'])
 
 
-#Last part of the assignment
-# Do * NOT * alter this line, until instructed!
-scaleFeatures = True
-if scaleFeatures: new_df = helper.scaleFeatures(df)
+if scaleFeatures: df = helper.scaleFeatures(df)
 from sklearn.decomposition import PCA
 pca = PCA(n_components=2)
-T = pca.fit_transform(new_df)
-ax = helper.drawVectors(T, pca.components_, new_df.columns.values, plt, scaleFeatures)
+T = pca.fit_transform(df)
+ax = helper.drawVectors(T, pca.components_, df.columns.values, plt, scaleFeatures)
 T = pd.DataFrame(T)
 T.columns = ['component1', 'component2']
 T.plot.scatter(x='component1', y='component2', marker='o', c=labels, alpha=0.75, ax=ax)
 plt.show()
-
-print new_df.describe()
-print "Variance of wc is %s. " % new_df.wc.var()
-print "Std of wc is %s. " % new_df.wc.std()
-print "Variance of rc is %s. " % new_df.rc.var()
-print "Std of rc is %s. " % new_df.rc.std()
-print "Variance of bgr is %s. " % new_df.bgr.var()
-print "Std of bgr is %s. " % new_df.bgr.std()
-
-
-
-
