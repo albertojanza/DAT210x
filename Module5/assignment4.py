@@ -4,7 +4,7 @@ from sklearn import preprocessing
 
 import matplotlib.pyplot as plt
 import matplotlib
-
+from sklearn.cluster import KMeans
 
 #
 # TODO: Parameters to play around with
@@ -61,6 +61,8 @@ def doKMeans(data, clusters=0):
   # centers and the labels
   #
   # .. your code here ..
+  model = KMeans(n_clusters=clusters)
+  model.fit(data)
   return model.cluster_centers_, model.labels_
 
 
@@ -71,6 +73,7 @@ def doKMeans(data, clusters=0):
 # on it.
 #
 # .. your code here ..
+df = pd.read_csv('Module5/Datasets/Wholesale customers data.csv')
 
 #
 # TODO: As instructed, get rid of the 'Channel' and 'Region' columns, since
@@ -79,7 +82,7 @@ def doKMeans(data, clusters=0):
 # KMeans to examine and give weight to them.
 #
 # .. your code here ..
-
+df.isnull().values.any()
 
 #
 # TODO: Before unitizing / standardizing / normalizing your data in preparation for
@@ -87,7 +90,8 @@ def doKMeans(data, clusters=0):
 # .describe() method, or even by using the built-in pandas df.plot.hist()
 #
 # .. your code here ..
-
+df.describe()
+df.Detergents_Paper.plot.hist(bins=40)
 
 #
 # INFO: Having checked out your data, you may have noticed there's a pretty big gap
@@ -175,8 +179,8 @@ print df.describe()
 #T = preprocessing.StandardScaler().fit_transform(df)
 #T = preprocessing.MinMaxScaler().fit_transform(df)
 #T = preprocessing.MaxAbsScaler().fit_transform(df)
-#T = preprocessing.Normalizer().fit_transform(df)
-T = df # No Change
+T = preprocessing.Normalizer().fit_transform(df)
+#T = df # No Change
 
 
 #
@@ -199,7 +203,7 @@ centroids, labels = doKMeans(T, n_clusters)
 # is good. Print them out before you transform them into PCA space for viewing
 #
 # .. your code here ..
-
+print centroids
 
 # Do PCA *after* to visualize the results. Project the centroids as well as 
 # the samples into the new 2D feature space for visualization purposes.

@@ -2,6 +2,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 import matplotlib
+from sklearn.cluster import KMeans
 
 matplotlib.style.use('ggplot') # Look Pretty
 
@@ -23,7 +24,12 @@ def showandtell(title=None):
 # Convert the date using pd.to_datetime, and the time using pd.to_timedelta
 #
 # .. your code here ..
-
+df = pd.read_csv('Module5/Datasets/CDR.csv') 
+df.head()
+df.dtypes
+df.CallDate = pd.to_datetime(df.CallDate)
+df.CallTime  = pd.to_timedelta(df.CallTime)
+df.dtypes
 
 #
 # TODO: Get a distinct list of "In" phone numbers (users) and store the values in a
@@ -31,18 +37,19 @@ def showandtell(title=None):
 # Hint: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.tolist.html
 #
 # .. your code here ..
-
+phone_numbers = list(df.In.unique())
 
 # 
 # TODO: Create a slice called user1 that filters to only include dataset records where the
 # "In" feature (user phone number) is equal to the first number on your unique list above
 #
 # .. your code here ..
+user1 = df[df.In == phone_numbers[0]]
 
 
 # INFO: Plot all the call locations
 user1.plot.scatter(x='TowerLon', y='TowerLat', c='gray', alpha=0.1, title='Call Locations')
-showandtell()  # Comment this line out when you're ready to proceed
+#showandtell()  # Comment this line out when you're ready to proceed
 
 
 #
@@ -68,6 +75,12 @@ showandtell()  # Comment this line out when you're ready to proceed
 # only examining records that came in on weekends (sat/sun).
 #
 # .. your code here ..
+user1_weekends_df = user1[(df.DOW == 'Sat') | (df.DOW == 'Sun')]
+user1_weekends_df.plot.scatter(x='TowerLon', y='TowerLat', c='gray', alpha=0.1, title='Call Locations')
+
+#Only Sundays
+user1_sunday_df = user1[(df.DOW == 'Sun')]
+user1_sunday_df.plot.scatter(x='TowerLon', y='TowerLat', c='gray', alpha=0.1, title='Call Locations')
 
 
 #
@@ -79,7 +92,8 @@ showandtell()  # Comment this line out when you're ready to proceed
 # slice, print out its length:
 #
 # .. your code here ..
-
+user1_weekends_at_night_df = user1_weekends_df[(user1_weekends_df.CallTime < '06:00:00') | (user1_weekends_df.CallTime > '22:00:00')]
+user1_weekends_at_night_df.plot.scatter(x='TowerLon', y='TowerLat', c='gray', alpha=0.1, title='Call Locations')
 
 #
 # INFO: Visualize the dataframe with a scatter plot as a sanity check. Since you're familiar
@@ -93,9 +107,9 @@ showandtell()  # Comment this line out when you're ready to proceed
 # caller's residence:
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.scatter(user1.TowerLon,user1.TowerLat, c='g', marker='o', alpha=0.2)
+ax.scatter(user1_weekends_at_night_df.TowerLon,user1_weekends_at_night_df.TowerLat, c='g', marker='o', alpha=0.2)
 ax.set_title('Weekend Calls (<6am or >10p)')
-showandtell()  # TODO: Comment this line out when you're ready to proceed
+#showandtell()  # TODO: Comment this line out when you're ready to proceed
 
 
 
@@ -115,8 +129,18 @@ showandtell()  # TODO: Comment this line out when you're ready to proceed
 #
 # .. your code here ..
 
+kmeans_model = KMeans(n_clusters=2)
+kmeans_model.fit(user1_weekends_at_night_df[['TowerLat','TowerLon']])
 
-showandtell()  # TODO: Comment this line out when you're ready to proceed
+centroids = kmeans_model.cluster_centers_
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.scatter(user1_weekends_at_night_df.TowerLat, user1_weekends_at_night_df.TowerLon, marker='.', alpha=0.3)
+ax.scatter(centroids[:,0], centroids[:,1], marker='x', c='red', alpha=0.5, linewidths=3, s=169)
+print centroids
+
+
+#showandtell()  # TODO: Comment this line out when you're ready to proceed
 
 
 
@@ -125,4 +149,12 @@ showandtell()  # TODO: Comment this line out when you're ready to proceed
 # locations. You might want to use a for-loop, unless you enjoy typing.
 #
 # .. your code here ..
+locations = []
+for phone_number in phone_numbers:
+  user = df[df.In == phone_number]
+  user_weekends_df = user[(df.DOW == 'Sat') | (df.DOW == 'Sun')]
+  user_weekends_at_night_df = user_weekends_df[(user_weekends_df.CallTime < '06:00:00') | (user_weekends_df.CallTime > '22:00:00')]
 
+  kmeans_model = KMeans(n_clusters=1)
+  kmeans_model.fit(user_weekends_at_night_df[['TowerLat','TowerLon']])
+  locations.append(kmeans_model.cluster_centers_)

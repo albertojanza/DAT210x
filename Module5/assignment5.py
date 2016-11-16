@@ -2,6 +2,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
+from sklearn.cross_validation import train_test_split
+from sklearn import preprocessing
+from sklearn.decomposition import PCA
+from sklearn.neighbors import KNeighborsClassifier
 
 matplotlib.style.use('ggplot') # Look Pretty
 
@@ -52,7 +56,9 @@ def plotDecisionBoundary(model, X, y):
 # loading your data properly--don't fail on the 1st step!
 #
 # .. your code here ..
-
+df = pd.read_csv('Module5/Datasets/wheat.data')
+df.head()
+    df.dtypes
 
 
 #
@@ -60,6 +66,8 @@ def plotDecisionBoundary(model, X, y):
 # called 'y'. Then drop the original 'wheat_type' column from the X
 #
 # .. your code here ..
+X = df.drop('wheat_type',1)
+y = df.wheat_type
 
 
 
@@ -67,15 +75,15 @@ def plotDecisionBoundary(model, X, y):
 # classification isn't ordinal, but just as an experiment...
 #
 # .. your code here ..
-
+y = y.astype("category", ordered=True).cat.codes
 
 
 #
 # TODO: Basic nan munging. Fill each row's nans with the mean of the feature
 #
 # .. your code here ..
-
-
+for i in range(X.shape[1]):
+  X.iloc[:, i] = X.iloc[:, i].fillna(X.iloc[:,i].mean())
 
 #
 # TODO: Split X into training and testing data sets using train_test_split().
@@ -84,7 +92,7 @@ def plotDecisionBoundary(model, X, y):
 # specify a random_state.
 #
 # .. your code here ..
-
+data_train, data_test, label_train, label_test = train_test_split(X, y, test_size=0.33, random_state=1)
 
 
 # 
@@ -99,6 +107,8 @@ def plotDecisionBoundary(model, X, y):
 #
 # .. your code here ..
 
+normalizer = preprocessing.Normalizer()
+normalizer = normalizer.fit(data_train,label_train)
 
 
 #
@@ -111,8 +121,8 @@ def plotDecisionBoundary(model, X, y):
 #
 # .. your code here ..
 
-
-
+T_data_train =  normalizer.fit_transform(data_train)
+T_data_test = normalizer.fit_transform(data_test)
 
 #
 # TODO: Just like your preprocessing transformation, create a PCA
@@ -125,8 +135,10 @@ def plotDecisionBoundary(model, X, y):
 #
 # .. your code here ..
 
-
-
+pca = PCA(n_components=2)
+pca.fit(T_data_train)
+PCA_T_data_train = pca.transform(T_data_train)
+PCA_T_data_test = pca.transform(T_data_test)
 
 #
 # TODO: Create and train a KNeighborsClassifier. Start with K=9 neighbors.
@@ -136,11 +148,14 @@ def plotDecisionBoundary(model, X, y):
 #
 # .. your code here ..
 
+knn = KNeighborsClassifier(n_neighbors=9)
+knn.fit(PCA_T_data_train, label_train) 
+model.predict([[1.1]])
 
 
 
 # HINT: Ensure your KNeighbors classifier object from earlier is called 'knn'
-plotDecisionBoundary(knn, X_train, y_train)
+plotDecisionBoundary(knn, PCA_T_data_train, label_train)
 
 
 #------------------------------------
@@ -152,7 +167,7 @@ plotDecisionBoundary(knn, X_train, y_train)
 # .score will take care of running your predictions for you automatically.
 #
 # .. your code here ..
-
+knn.score(PCA_T_data_test,label_test)
 
 
 #

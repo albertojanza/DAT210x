@@ -31,8 +31,8 @@ samples = []
 #
 # .. your code here .. 
 import os
-for image in os.listdir('Datasets/ALOI/32/'):
-  samples.append(misc.imread('Datasets/ALOI/32/' + image).reshape(-1))
+for image in os.listdir('Module4/Datasets/ALOI/32/'):
+  samples.append(misc.imread('Module4/Datasets/ALOI/32/' + image).reshape(-1))
 
 df = pd.DataFrame(samples)
 from sklearn import manifold
@@ -72,8 +72,8 @@ mixed_samples = list(samples)
 colors = []
 for i in mixed_samples:
   colors.append('b') 
-for image in os.listdir('Datasets/ALOI/32i/'):
-  mixed_samples.append(misc.imread('Datasets/ALOI/32i/' + image).reshape(-1))
+for image in os.listdir('Module4/Datasets/ALOI/32i/'):
+  mixed_samples.append(misc.imread('Module4/Datasets/ALOI/32i/' + image).reshape(-1))
   colors.append('r')
 
 #
