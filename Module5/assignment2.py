@@ -37,7 +37,7 @@ df.dtypes
 # Hint: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.tolist.html
 #
 # .. your code here ..
-phone_numbers = df.In.unique()
+phone_numbers = list(df.In.unique())
 
 # 
 # TODO: Create a slice called user1 that filters to only include dataset records where the

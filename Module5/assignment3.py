@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import timedelta
 import matplotlib.pyplot as plt
 import matplotlib
+from sklearn.cluster import KMeans
 
 matplotlib.style.use('ggplot') # Look Pretty
 
@@ -37,7 +38,7 @@ def clusterWithFewestSamples(model):
   return (model.labels_==minCluster)
 
 
-def doKMeans(data, clusters=0):
+def doKMeans(df, clusters=0):
   #
   # TODO: Be sure to only feed in Lat and Lon coordinates to the KMeans algo, since none of the other
   # data is suitable for your purposes. Since both Lat and Lon are (approximately) on the same scale,
@@ -48,7 +49,20 @@ def doKMeans(data, clusters=0):
   # This is part of your domain expertise.
   #
   # .. your code here ..
-  return model
+  fig = plt.figure()
+  ax = fig.add_subplot(111)
+  ax.scatter(df.TowerLat, df.TowerLon, marker='.', alpha=0.3)
+
+  new_df = df[['TowerLat','TowerLon']]
+
+  kmeans_model = KMeans(n_clusters=clusters)
+  kmeans_model.fit(new_df)
+
+  centroids = kmeans_model.cluster_centers_
+  ax.scatter(centroids[:,0], centroids[:,1], marker='x', c='red', alpha=0.5, linewidths=3, s=169)
+  print centroids
+
+  return kmeans_model
 
 
 
@@ -57,18 +71,19 @@ def doKMeans(data, clusters=0):
 # Convert the date using pd.to_datetime, and the time using pd.to_timedelta
 #
 # .. your code here ..
-
-
-
-
+df = pd.read_csv('Module5/Datasets/CDR.csv') 
+df.head()
+df.dtypes
+df.CallDate = pd.to_datetime(df.CallDate)
+df.CallTime  = pd.to_timedelta(df.CallTime)
+df.dtypes
 
 #
-# TODO: Get a distinct list of "In" phone numbers (users) and store the values in a
-# regular python list.
-# Hint: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.tolist.html
-#
-# .. your code here ..
+# TODO: Get a distinct list of "In" phone numbers (users)
+# You don't have to save it as a Python list this time, and can keep it as an NDArray. 
+# The previous lab had you convert to a list just so you'd have the experience doing it.
 
+phone_numbers = df.In.unique()
 
 #
 # INFO: The locations map above should be too "busy" to really wrap your head around. This
@@ -95,13 +110,13 @@ print "\n\nExamining person: ", 0
 # "In" feature (user phone number) is equal to the first number on your unique list above
 #
 # .. your code here ..
-
+user1 = df[df.In == phone_numbers[0]]
 
 #
 # TODO: Alter your slice so that it includes only Weekday (Mon-Fri) values.
 #
 # .. your code here ..
-
+user1_weekdays_df = user1[(user1.DOW != 'Sat') & (user1.DOW != 'Sun')]
 
 #
 # TODO: The idea is that the call was placed before 5pm. From Midnight-730a, the user is
@@ -116,6 +131,7 @@ print "\n\nExamining person: ", 0
 # TODO: Plot the Cell Towers the user connected to
 #
 # .. your code here ..
+user1_weekdays_before_5pm_df = user1_weekdays_df[(user1_weekdays_df.CallTime < '17:00:00') ]
 
 
 
@@ -126,7 +142,7 @@ print "\n\nExamining person: ", 0
 # sweep up the annoying outliers and not-home, not-work travel occasions. the other two will zero in
 # on the user's approximate home location and work locations. Or rather the location of the cell
 # tower closest to them.....
-model = doKMeans(user1, 3)
+model = doKMeans(user1_weekdays_before_5pm_df, 3)
 
 
 #
@@ -136,14 +152,30 @@ model = doKMeans(user1, 3)
 # should be somewhere in between the two. What time, on average, is the user in between home and
 # work, between the midnight and 5pm?
 midWayClusterIndices = clusterWithFewestSamples(model)
-midWaySamples = user1[midWayClusterIndices]
+midWaySamples = user1_weekdays_before_5pm_df[midWayClusterIndices]
 print "    Its Waypoint Time: ", midWaySamples.CallTime.mean()
-
+clusterInfo(model)
 
 #
 # Let's visualize the results!
 # First draw the X's for the clusters:
+fig = plt.figure()
+ax = fig.add_subplot(111)
 ax.scatter(model.cluster_centers_[:,1], model.cluster_centers_[:,0], s=169, c='r', marker='x', alpha=0.8, linewidths=2)
 #
 # Then save the results:
-showandtell('Weekday Calls Centroids')  # Comment this line out when you're ready to proceed
+#showandtell('Weekday Calls Centroids')  # Comment this line out when you're ready to proceed
+
+
+#Given the indexed time range, and the times people usually receive / make calls, the cluster with the most 
+#samples is likely to be the user's work location. What is the phone number of the user who works at the US 
+#Post Office near Cockrell Hill Rd?
+locations = []
+for phone_number in phone_numbers:
+  user = df[df.In == phone_number]
+  user_weekdays_df = user[(user.DOW != 'Sat') & (user.DOW != 'Sun')]
+  user_weekdays_before_5pm_df = user_weekdays_df[(user_weekdays_df.CallTime < '17:00:00') ]
+
+  model = doKMeans(user_weekdays_before_5pm_df, 3)
+  clusterInfo(model)
+
