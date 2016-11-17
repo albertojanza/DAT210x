@@ -74,6 +74,7 @@ def doKMeans(data, clusters=0):
 #
 # .. your code here ..
 df = pd.read_csv('Module5/Datasets/Wholesale customers data.csv')
+df.isnull().values.any()
 
 #
 # TODO: As instructed, get rid of the 'Channel' and 'Region' columns, since
@@ -82,7 +83,7 @@ df = pd.read_csv('Module5/Datasets/Wholesale customers data.csv')
 # KMeans to examine and give weight to them.
 #
 # .. your code here ..
-df.isnull().values.any()
+df = df.drop(labels=['Channel', 'Region'], axis=1)
 
 #
 # TODO: Before unitizing / standardizing / normalizing your data in preparation for
@@ -91,7 +92,7 @@ df.isnull().values.any()
 #
 # .. your code here ..
 df.describe()
-df.Detergents_Paper.plot.hist(bins=40)
+#df.Detergents_Paper.plot.hist(bins=40)
 
 #
 # INFO: Having checked out your data, you may have noticed there's a pretty big gap
@@ -176,10 +177,10 @@ print df.describe()
 #
 # TODO: Un-comment just ***ONE*** of lines at a time and see how alters your results
 # Pay attention to the direction of the arrows, as well as their LENGTHS
-#T = preprocessing.StandardScaler().fit_transform(df)
+T = preprocessing.StandardScaler().fit_transform(df)
 #T = preprocessing.MinMaxScaler().fit_transform(df)
 #T = preprocessing.MaxAbsScaler().fit_transform(df)
-T = preprocessing.Normalizer().fit_transform(df)
+#T = preprocessing.Normalizer().fit_transform(df)
 #T = df # No Change
 
 
