@@ -124,7 +124,7 @@ def benchmark(model, X_train, X_test, y_train, y_test, wintitle='Figure 1'):
 # Indices shouldn't be doubled, nor weird headers...
 #
 # .. your code here ..
-X = pd.read_csv("Module5/Datasets/wheat.data")
+X = pd.read_csv("Module5/Datasets/wheat.data", index_col='id')
 print X.head()
 print X.dtypes
 
