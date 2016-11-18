@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+from sklearn import linear_model
 
 matplotlib.style.use('ggplot') # Look Pretty
 
@@ -34,7 +35,10 @@ def drawLine(model, X_test, y_test, title):
 # spread sheet application
 #
 # .. your code here ..
-
+df = pd.read_csv("Module5/Datasets/life_expectancy.csv", sep="\s+")
+print df.head()
+print df.dtypes
+print df.describe()
 
 #
 # TODO: Create your linear regression model here and store it in a
@@ -42,7 +46,7 @@ def drawLine(model, X_test, y_test, title):
 # with it yet:
 #
 # .. your code here ..
-
+model = linear_model.LinearRegression()
 
 
 #
@@ -54,8 +58,10 @@ def drawLine(model, X_test, y_test, title):
 # of this document before proceeding.
 #
 # .. your code here ..
-
-
+slice_less_1986 = df[df.Year < 1986]
+X_train = slice_less_1986[["Year"]]
+y_train = slice_less_1986[["WhiteMale"]]
+#y_train = X_train.WhiteMale.reshape(-1,1)
 
 #
 # TODO: Train your model then pass it into drawLine with your training
@@ -66,15 +72,20 @@ def drawLine(model, X_test, y_test, title):
 # 2030 and 2045 extrapolation.
 #
 # .. your code here ..
+model.fit(X_train, y_train)
+drawLine(model, X_train, y_train, "WhiteMale")
 
+#Est 2014 WhiteMale Life Expectancy:  [ 80.85635426]
+#Est 2030 WhiteMale Life Expectancy:  [ 85.39349384]
+#Est 2045 WhiteMale Life Expectancy:  [ 89.6470622]
 
 #
 # TODO: Print the actual 2014 WhiteMale life expectancy from your
 # loaded dataset
 #
 # .. your code here ..
-
-
+print df[df.Year == 2014].WhiteMale
+# 76.7
 
 # 
 # TODO: Repeat the process, but instead of for WhiteMale, this time
@@ -83,7 +94,15 @@ def drawLine(model, X_test, y_test, title):
 # BlackFemale life expectancy
 #
 # .. your code here ..
-
+model = linear_model.LinearRegression()
+slice_less_1986 = df[df.Year < 1986]
+X_train = slice_less_1986[["Year"]]
+y_train = slice_less_1986[["BlackFemale"]]
+model.fit(X_train, y_train)
+drawLine(model, X_train, y_train, "BlackFemale")
+#Est 2014 BlackFemale Life Expectancy:  [ 88.6988994]
+#Est 2030 BlackFemale Life Expectancy:  [ 96.11438808]
+#Est 2045 BlackFemale Life Expectancy:  [ 103.06640871]
 
 
 #
@@ -93,7 +112,15 @@ def drawLine(model, X_test, y_test, title):
 # the course
 #
 # .. your code here ..
+print df.corr()
 
+import matplotlib.pyplot as plt
+
+plt.imshow(df.corr(), cmap=plt.cm.Blues, interpolation='nearest')
+plt.colorbar()
+tick_marks = [i for i in range(len(df.columns))]
+plt.xticks(tick_marks, df.columns, rotation='vertical')
+plt.yticks(tick_marks, df.columns)
 plt.show()
 
 
