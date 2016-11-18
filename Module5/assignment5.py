@@ -56,9 +56,9 @@ def plotDecisionBoundary(model, X, y):
 # loading your data properly--don't fail on the 1st step!
 #
 # .. your code here ..
-df = pd.read_csv('Module5/Datasets/wheat.data')
+df = pd.read_csv('Module5/Datasets/wheat.data', index_col=0)
 df.head()
-    df.dtypes
+df.dtypes
 
 
 #
@@ -108,7 +108,8 @@ data_train, data_test, label_train, label_test = train_test_split(X, y, test_siz
 # .. your code here ..
 
 normalizer = preprocessing.Normalizer()
-normalizer = normalizer.fit(data_train,label_train)
+normalizer = normalizer.fit(data_train)
+#normalizer = normalizer.fit(data_train,label_train)
 
 
 #
@@ -121,8 +122,11 @@ normalizer = normalizer.fit(data_train,label_train)
 #
 # .. your code here ..
 
-T_data_train =  normalizer.fit_transform(data_train)
-T_data_test = normalizer.fit_transform(data_test)
+T_data_train =  normalizer.transform(data_train)
+T_data_test = normalizer.transform(data_test)
+
+#T_data_train =  normalizer.fit_transform(data_train)
+#T_data_test = normalizer.fit_transform(data_test)
 
 #
 # TODO: Just like your preprocessing transformation, create a PCA
@@ -150,7 +154,6 @@ PCA_T_data_test = pca.transform(T_data_test)
 
 knn = KNeighborsClassifier(n_neighbors=9)
 knn.fit(PCA_T_data_train, label_train) 
-model.predict([[1.1]])
 
 
 
@@ -169,6 +172,13 @@ plotDecisionBoundary(knn, PCA_T_data_train, label_train)
 # .. your code here ..
 knn.score(PCA_T_data_test,label_test)
 
+
+for n in range(9, 0, -1):
+    knn = KNeighborsClassifier(n_neighbors=n)
+    knn.fit(PCA_T_data_train, label_train)
+    print('K = {}; score = {}'.format(n, knn.score(PCA_T_data_test, label_test)))
+    if n == 1:
+        plotDecisionBoundary(knn, PCA_T_data_train, label_train)
 
 #
 # BONUS: Instead of the ordinal conversion, try and get this assignment
