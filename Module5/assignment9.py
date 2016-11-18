@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from sklearn import linear_model
+from sklearn.cross_validation import train_test_split
 
 matplotlib.style.use('ggplot') # Look Pretty
 
@@ -84,7 +86,11 @@ def drawPlane(model, X_test, y_test, title, R2):
 # called X:
 #
 # .. your code here ..
-
+df = pd.read_csv("Module5/Datasets/College.csv")
+print df.describe()
+print df.dtypes
+print df.head()
+X = df
 
 #
 # INFO: This line isn't necessary for your purposes; but we'd just
@@ -103,7 +109,7 @@ X.Private = X.Private.map({'Yes':1, 'No':0})
 # with it yet:
 #
 # .. your code here ..
-
+model = linear_model.LinearRegression()
 
 
 
@@ -120,12 +126,23 @@ X.Private = X.Private.map({'Yes':1, 'No':0})
 # a random_state of 7.
 #
 # .. your code here ..
+room_and_board = X["Room.Board"].reshape(-1,1)
+accepted_studentes = X.Accept.reshape(-1,1)
+X_train, X_test, y_train, y_test = train_test_split(room_and_board, accepted_studentes, test_size=0.30, random_state=7)
+
 
 #
 # TODO: Fit and score your model appropriately. Store the score in the
 # score variable.
 #
 # .. your code here ..
+#model.fit(X_train.reshape(-1,1), y_train.reshape(-1,1))
+#score = model.score(X_test.reshape(-1,1), y_test.reshape(-1,1))
+
+model.fit(X_train, y_train)
+score = model.score(X_test, y_test)
+
+# -0.00266698641455
 
 # INFO: We'll take it from here, buddy:
 drawLine(model, X_test, y_test, "Accept(Room&Board)", score)
@@ -139,8 +156,14 @@ drawLine(model, X_test, y_test, "Accept(Room&Board)", score)
 # per college.
 #
 # .. your code here ..
+enroll = X["Enroll"].reshape(-1,1)
+accepted_students = X.Accept.reshape(-1,1)
+X_train, X_test, y_train, y_test = train_test_split(enroll, accepted_students, test_size=0.30, random_state=7)
+model.fit(X_train, y_train)
+score = model.score(X_test, y_test)
+print score
 drawLine(model, X_test, y_test, "Accept(Enroll)", score)
-
+# 0.857820486736
 
 
 # 
@@ -149,8 +172,14 @@ drawLine(model, X_test, y_test, "Accept(Enroll)", score)
 # students per college.
 #
 # .. your code here ..
+failed_undergradute = X["F.Undergrad"].reshape(-1,1)
+accepted_students = X.Accept.reshape(-1,1)
+X_train, X_test, y_train, y_test = train_test_split(failed_undergradute, accepted_students, test_size=0.30, random_state=7)
+model.fit(X_train, y_train)
+score = model.score(X_test, y_test)
+print score
 drawLine(model, X_test, y_test, "Accept(F.Undergrad)", score)
-
+# 0.777991797375
 
 #
 # TODO: Duplicate the process above (almost). This time is going to be
@@ -165,6 +194,13 @@ drawLine(model, X_test, y_test, "Accept(F.Undergrad)", score)
 # inputs. Your training labels will remain a single slice.
 #
 # .. your code here ..
+room_and_board_and_enroll = X[["Room.Board","Enroll"]]
+accepted_students = X.Accept.reshape(-1,1)
+X_train, X_test, y_train, y_test = train_test_split(room_and_board_and_enroll, accepted_students, test_size=0.30, random_state=7)
+model.fit(X_train, y_train)
+score = model.score(X_test, y_test)
+print score
+# 0.876437177421
 drawPlane(model, X_test, y_test, "Accept(Room&Board,Enroll)", score)
 
 
