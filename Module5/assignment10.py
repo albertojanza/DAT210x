@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 import scipy.io.wavfile as wavfile
+from sklearn import linear_model
 
 # Good Luck!
 
@@ -51,7 +52,13 @@ Provided_Portion = 0.25
 # just the data!) to your Python list 'zero':
 #
 # .. your code here ..
-
+import os
+zeros = []
+for audio in os.listdir('Module5/Datasets/free-spoken-digit-dataset-master'):
+  zeros.append(wavfile.read('Module5/Datasets/free-spoken-digit-dataset-master/' + audio)[1])
+  
+sample_rate = wavfile.read('Module5/Datasets/free-spoken-digit-dataset-master/0_jackson_0.wav')[0]
+#  samples.append(misc.imread('Module5/Datasets/free-spoken-digit-dataset-master' + image).reshape(-1))
 
 
 # 
@@ -69,7 +76,12 @@ Provided_Portion = 0.25
 # NDArray using .values
 #
 # .. your code here ..
-
+list_zeros = zeros
+df = pd.DataFrame(zeros, dtype=np.int16)
+a = df.dropna(axis=1)
+zero = a.values
+#values = a.values
+#zero = pd.DataFrame(values, dtype=np.int16)
 
 #
 # TODO: It's important to know how (many audio_samples samples) long the
@@ -78,7 +90,7 @@ Provided_Portion = 0.25
 # n_audio_samples
 #
 # .. your code here ..
-
+n_audio_samples = zero.shape[1]
 
 
 #
@@ -87,7 +99,7 @@ Provided_Portion = 0.25
 # with it yet:
 #
 # .. your code here ..
-
+model = linear_model.LinearRegression()
 
 
 #
@@ -112,8 +124,8 @@ train = np.delete(zero, [random_idx], axis=0)
 # sample (audio file, e.g. observation).
 #
 # .. your code here ..
-
-
+print train.shape
+print test.shape
 
 #
 # INFO: The test data will have two parts, X_test and y_test. X_test is
@@ -130,7 +142,7 @@ train = np.delete(zero, [random_idx], axis=0)
 # half of, so that you can compare it to the 'patched' clip once 
 # you've generated it. HINT: you should have got the sample_rate
 # when you were loading up the .wav files:
-wavfile.write('Original Test Clip.wav', sample_rate, test)
+wavfile.write('tmp/Original Test Clip.wav', sample_rate, test)
 
 
 
@@ -142,7 +154,7 @@ wavfile.write('Original Test Clip.wav', sample_rate, test)
 # n_audio_samples audio features from test and store it in X_test.
 #
 # .. your code here ..
-
+X_test = test[:int(Provided_Portion * test.shape[0])]
 
 #
 # TODO: If the first Provided_Portion * n_audio_samples features were
@@ -152,7 +164,7 @@ wavfile.write('Original Test Clip.wav', sample_rate, test)
 # in completing the sound file.
 #
 # .. your code here ..
-
+y_test = test[int(Provided_Portion * test.shape[0]):test.shape[0]]
 
 
 
@@ -167,9 +179,12 @@ wavfile.write('Original Test Clip.wav', sample_rate, test)
 # accomplishable using regular indexing in two lines of code.
 #
 # .. your code here ..
+#X_train = train[:][:round(Provided_Portion * train.shape[1])]
+#y_train = train[:][round(Provided_Portion * train.shape[1]):train.shape[1]]
+X_train = train[:,range(0,int(Provided_Portion * train.shape[1]))]
+y_train = train[:,range(int(Provided_Portion * train.shape[1]),train.shape[1])]
 
-
-
+#  X_train[:,range(1,6)]
 # 
 # TODO: SciKit-Learn gets mad if you don't supply your training
 # data in the form of a 2D arrays: [n_samples, n_features].
@@ -183,12 +198,13 @@ wavfile.write('Original Test Clip.wav', sample_rate, test)
 # [n_samples] into [n_samples, 1]:
 #
 # .. your code here ..
-
-
+y_test = y_test.reshape(1, -1)
+X_test = X_test.reshape(1, -1)
 #
 # TODO: Fit your model using your training data and label:
 #
 # .. your code here ..
+model = model.fit(X_train, y_train)
 
 
 # 
@@ -196,7 +212,7 @@ wavfile.write('Original Test Clip.wav', sample_rate, test)
 # resulting prediction in a variable called y_test_prediction
 #
 # .. your code here ..
-
+y_test_prediction = model.predict(X_test)
 
 # INFO: SciKit-Learn will use float64 to generate your predictions
 # so let's take those values back to int16:
@@ -209,6 +225,7 @@ y_test_prediction = y_test_prediction.astype(dtype=np.int16)
 # by passing in your test data and test label (y_test).
 #
 # .. your code here ..
+score = model.score(X_test, y_test)
 print "Extrapolation R^2 Score: ", score
 
 
@@ -218,7 +235,7 @@ print "Extrapolation R^2 Score: ", score
 # together with the abomination the predictor model generated for you,
 # and then save the completed audio clip:
 completed_clip = np.hstack((X_test, y_test_prediction))
-wavfile.write('Extrapolated Clip.wav', sample_rate, completed_clip[0])
+wavfile.write('tmp/Extrapolated Clip.wav', sample_rate, completed_clip[0])
 
 
 
