@@ -39,7 +39,7 @@ print X.dtypes
 # problematic
 #
 # .. your code here ..
-X.z4 = pd.to_numeric(X.z4, errors='raise')
+#X.z4 = pd.to_numeric(X.z4, errors='raise')
 #
 # INFO: If you find any problematic records, drop them before calling the
 # to_numeric methods above...
@@ -51,7 +51,12 @@ X.z4 = pd.to_numeric(X.z4, errors='raise')
 #
 # .. your code here ..
 
+#Old failed answer code
+#y = X['class'].astype("category").cat.codes
+
 y = X['class'].astype("category").cat.codes
+
+y = pd.get_dummies(y,columns=['class'])
 
 #
 # TODO: Get rid of the user and class columns
