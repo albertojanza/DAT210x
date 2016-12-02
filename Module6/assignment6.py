@@ -99,7 +99,7 @@ s = time.time()
 # TODO: train your model on your training set
 #
 # .. your code here ..
-model.fit(X, y)
+model.fit(X_train, y_train)
 
 print "Fitting completed in: ", time.time() - s
 
