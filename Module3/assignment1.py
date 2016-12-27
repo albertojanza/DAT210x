@@ -1,5 +1,4 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 import matplotlib
 
 # Look pretty...
@@ -10,7 +9,7 @@ matplotlib.style.use('ggplot')
 # It's located at 'Datasets/wheat.data'
 # 
 # .. your code here ..
-df = pd.read_csv('/home/alberto/workspace/DAT210x/Module3/Datasets/wheat.data')
+df = pd.read_csv('Module3/Datasets/wheat.data')
 
 #
 # TODO: Create a slice of your dataframe (call it s1)

@@ -1,5 +1,4 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 import matplotlib
 
 # Look pretty...
@@ -18,8 +17,8 @@ df = pd.read_csv('/home/alberto/workspace/DAT210x/Module3/Datasets/wheat.data')
 # area and perimeter features
 # 
 # .. your code here ..
-
 df.plot.scatter(x='area', y='perimeter')
+
 #
 # TODO: Create a 2d scatter plot that graphs the
 # groove and asymmetry features
@@ -41,8 +40,7 @@ df.plot.scatter(x='compactness', y='width')
 # Check out the results, and see what happens when you add
 # in the optional display parameter marker with values of
 # either '^', '.', or 'o'.
-
-df.plot.scatter(x='area', y='perimeter', marker='o')
+df.plot.scatter(x='area', y='perimeter', marker='^')
 
 #plt.show()
 

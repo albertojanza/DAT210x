@@ -7,7 +7,7 @@ import numpy as np
 # Load up the dataset, setting correct header labels.
 #
 # .. your code here ..
-df = pd.read_csv('workspace/DAT210x/Module2/Datasets/census.data', index_col = 0, names = ['education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification'])
+df = pd.read_csv('Module2/Datasets/census.data', index_col = 0, names = ['education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification'])
 
 
 #
@@ -27,7 +27,7 @@ df = pd.read_csv('workspace/DAT210x/Module2/Datasets/census.data', index_col = 0
 df.head()
 df.dtypes
 df['capital-gain'].unique()
-df = pd.read_csv('workspace/DAT210x/Module2/Datasets/census.data', index_col = 0, na_values = '?',
+df = pd.read_csv('Module2/Datasets/census.data', index_col = 0, na_values = '?',
                  names = ['education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification'])
 df['capital-gain'].unique()
 df.dtypes

@@ -4,7 +4,7 @@ import pandas as pd
 # Ensuring you set the appropriate header column names
 #
 # .. your code here ..
-df = pd.read_csv('/home/alberto/workspace/DAT210x/Module2/Datasets/servo.data', names=['motor', 'screw', 'pgain', 'vgain', 'class'])
+df = pd.read_csv('Module2/Datasets/servo.data', names=['motor', 'screw', 'pgain', 'vgain', 'class'])
 
 
 

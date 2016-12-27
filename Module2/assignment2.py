@@ -3,7 +3,7 @@ import pandas as pd
 # TODO: Load up the 'tutorial.csv' dataset
 #
 # .. your code here ..
-df = pd.read_csv('/home/alberto/workspace/DAT210x/Module2/Datasets/tutorial.csv')
+df = pd.read_csv('Module2/Datasets/tutorial.csv')
 print(df)
 
 # TODO: Print the results of the .describe() method
